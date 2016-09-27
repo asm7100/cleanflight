@@ -25,6 +25,7 @@
 #include "config/parameter_group.h"
 
 #include "common/axis.h"
+#include "common/time.h"
 
 #include "drivers/gpio.h"
 #include "drivers/system.h"
@@ -679,7 +680,7 @@ void reconfigureAlignment(sensorAlignmentConfig_t *sensorAlignmentConfig)
 #endif
 }
 
-bool sensorsAutodetect(uint32_t targetLooptime)
+bool sensorsAutodetect(uint16_t gyro_sample_hz)
 {
     memset(&acc, 0, sizeof(acc));
     memset(&gyro, 0, sizeof(gyro));
@@ -696,7 +697,7 @@ bool sensorsAutodetect(uint32_t targetLooptime)
         return false;
     }
 
-    gyro.targetLooptime = targetLooptime;  // Set gyro sample rate before initialisation
+    gyro.refreshPeriod = PERIOD_HZ(gyro_sample_hz);
 
     // this is safe because either mpu6050 or mpu3050 or lg3d20 sets it, and in case of fail, we never get here.
     gyro.init(gyroConfig()->gyro_lpf);
